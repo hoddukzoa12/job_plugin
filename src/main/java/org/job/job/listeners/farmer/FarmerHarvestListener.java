@@ -21,15 +21,15 @@ public class FarmerHarvestListener implements Listener {
         Material type = block.getType();
 
         if (Job.getInstance().getJobManager().getJob(player.getUniqueId()) != JobType.FARMER) return;
+        if (type != Material.SUGAR_CANE) {
+            // ✅ 성숙 여부 확인 (Ageable만 처리)
+            if (block.getBlockData() instanceof Ageable ageable) {
+                int age = ageable.getAge();
+                int max = ageable.getMaximumAge();
 
-        // ✅ 성숙 여부 확인 (Ageable만 처리)
-        if (block.getBlockData() instanceof Ageable ageable) {
-            int age = ageable.getAge();
-            int max = ageable.getMaximumAge();
-
-            if (age < max) return; // ❌ 미성숙 작물이면 경험치 주지 않음
+                if (age < max) return; // ❌ 미성숙 작물이면 경험치 주지 않음
+            }
         }
-
         int xp = Job.getInstance().getCropXPConfig().getXP(type);
         if (xp <= 0) return;
 

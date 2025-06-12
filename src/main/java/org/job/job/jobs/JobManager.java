@@ -30,6 +30,11 @@ public class JobManager {
         loadJobs();
     }
 
+    public boolean isPlayerInJob(UUID uuid, String jobName) {
+        JobType type = playerJobs.get(uuid);
+        return type != null && type.name().equalsIgnoreCase(jobName);
+    }
+
     public void setJob(UUID uuid, JobType job) {
         playerJobs.put(uuid, job);
         config.set(uuid.toString(), job.name());

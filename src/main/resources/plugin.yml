@@ -2,6 +2,7 @@ name: Job
 version: '1.0-SNAPSHOT'
 main: org.job.job.Job
 api-version: '1.20'
+
 commands:
   changejob:
     description: 직업 변경 GUI를 엽니다.

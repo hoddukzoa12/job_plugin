@@ -30,10 +30,15 @@ public class CropXPConfig {
                 // 기본값 저장
                 config.set("WHEAT", 2);
                 config.set("CARROTS", 3);
-                config.set("POTATOES", 5);
-                config.set("BEETROOTS", 2);
-                config.set("MELON", 4);
+                config.set("POTATOES", 3);
+                config.set("BEETROOTS", 3);
+                config.set("COCOA", 4);
+                config.set("NETHER_WART", 4);
                 config.set("PUMPKIN", 4);
+                config.set("MELON", 4);
+                config.set("SUGAR_CANE", 1);
+
+
 
                 config.save(file);
             } catch (IOException e) {
