@@ -1,4 +1,3 @@
-````markdown
 # 🌾 Job Plugin for Minecraft (직업 시스템 플러그인)
 
 > Minecraft Paper 1.20.1 기반의 RPG형 직업 시스템 플러그인  
@@ -72,21 +71,21 @@
 > 플러그인 사용 시, 다음 설정 파일들이 자동 생성됩니다:
 
 
-
+```sh
 /plugins/Job/
 ├── farmer-data.yml     # 플레이어 레벨 및 스킬 데이터
 ├── crop-xp.yml         # 작물별 경험치 설정
 ├── rare-drops.yml      # 특수 작물 드롭 설정
 ├── jobs.yml            # 플레이어 직업 정보
 
-
+```
 
 ---
 
 ## 📁 주요 파일 구조
 
 
-
+```sh
 org.job.job
 ├── Job.java                          # 플러그인 메인 클래스
 ├── jobs.JobManager                   # 직업 저장/조회/관리
@@ -98,7 +97,7 @@ org.job.job
 ├── listeners.farmer.FarmerHarvestListener   # 작물 수확 → 경험치 부여
 ├── listeners.farmer.RareCropDropListener    # 작물 수확 → 희귀 아이템 드롭
 ├── util.CustomItemsCrops             # 커스텀 작물 아이템 생성 도구
-
+```
 
 
 ---
@@ -144,6 +143,5 @@ org.job.job
 
 - 피드백 및 기여는 언제나 환영합니다!
 - GitHub Issue 또는 Pull Request로 참여해주세요.
-```
 
-````
+
