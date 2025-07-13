@@ -1,0 +1,10 @@
+# Job Plugin Main Configuration
+
+# Level up formula: base + (per-level * (current_level - 1))
+# Example with default values:
+# Level 1 -> 100 XP
+# Level 2 -> 150 XP
+# Level 10 -> 550 XP
+level-up:
+  base: 100
+  per-level: 50

@@ -2,28 +2,35 @@ package org.job.job;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.job.job.commands.ChangeJobCommand;
+import org.job.job.commands.JobCommand;
 import org.job.job.config.CropXPConfig;
 import org.job.job.config.RareDropConfig;
-import org.job.job.jobs.JobManager;
-import org.job.job.listeners.*;
+import org.job.job.config.SkillConfigManager;
+import org.job.job.data.PlayerDataManager;
+import org.job.job.hud.HUDManager;
+import org.job.job.listeners.JobGUIListener;
+import org.job.job.listeners.PlayerJoinListener;
+import org.job.job.listeners.PlayerQuitListener;
 import org.job.job.listeners.farmer.FarmerHarvestListener;
-import org.job.job.listeners.farmer.FarmerLevelListener;
-import org.job.job.listeners.farmer.RareCropDropListener;
-import org.job.job.skills.farmer.FarmerHUDManager;
-import org.job.job.skills.farmer.FarmerLevelManager;
-import org.job.job.skills.farmer.FarmerSkillManager;
-import org.job.job.util.CustomItemsCrops;
+import org.job.job.listeners.farmer.FarmerToolListener;
+import org.job.job.listeners.SkillGUIListener;
+import org.job.job.skills.SkillManager;
+
+import org.job.job.handlers.FarmerActionHandler;
+import org.job.job.cooking.CookingManager;
 
 public final class Job extends JavaPlugin {
 
-    private FarmerSkillManager farmerSkillManager;
     private static Job instance;
-    private JobManager jobManager;
+    private PlayerDataManager playerDataManager;
+    private SkillConfigManager skillConfigManager;
+    private SkillManager skillManager;
     private CropXPConfig cropXPConfig;
-    private FarmerLevelManager farmerLevelManager;
-    private FarmerHUDManager farmerHUDManager;
-    private CustomItemsCrops customItemsCrops;
     private RareDropConfig rareDropConfig;
+    private HUDManager hudManager;
+    private FarmerActionHandler farmerActionHandler;
+    private CookingManager cookingManager;
+
     public static Job getInstance() {
         return instance;
     }
@@ -31,52 +38,83 @@ public final class Job extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        jobManager = new JobManager();
-        farmerSkillManager = new FarmerSkillManager();
+
+        // Load default config
+        saveDefaultConfig();
+
+        // Configs
         cropXPConfig = new CropXPConfig();
-        farmerLevelManager = new FarmerLevelManager();
-        farmerHUDManager = new FarmerHUDManager();
         rareDropConfig = new RareDropConfig();
-        customItemsCrops = new CustomItemsCrops(rareDropConfig);
+        skillConfigManager = new SkillConfigManager(this);
 
+        // Managers
+        playerDataManager = new PlayerDataManager(this);
+        skillManager = new SkillManager(playerDataManager, skillConfigManager);
+        hudManager = new HUDManager(playerDataManager);
 
+        // Handlers
+        farmerActionHandler = new FarmerActionHandler(this, playerDataManager, skillManager);
+
+        // Cooking Manager
+        cookingManager = new CookingManager(this, skillManager);
+        cookingManager.enable();
+
+        // Register Commands
         getCommand("changejob").setExecutor(new ChangeJobCommand());
-        getServer().getPluginManager().registerEvents(new ItemProtectionListener(), this);
+        getCommand("job").setExecutor(new JobCommand());
+
+        // Register Listeners
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(playerDataManager), this);
         getServer().getPluginManager().registerEvents(new JobGUIListener(), this);
-        getServer().getPluginManager().registerEvents(new FarmerLevelListener(), this);
-        getServer().getPluginManager().registerEvents(new FarmerHarvestListener(), this);
-        getServer().getPluginManager().registerEvents(new JoinQuitHUDListener(), this);
-        getServer().getPluginManager().registerEvents(
-                new RareCropDropListener(customItemsCrops, rareDropConfig, jobManager),
-                this
-        );
+        getServer().getPluginManager().registerEvents(new FarmerToolListener(skillManager), this);
+        getServer().getPluginManager().registerEvents(new FarmerHarvestListener(this), this);
+        getServer().getPluginManager().registerEvents(new SkillGUIListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
+        getServer().getPluginManager().registerEvents(new org.job.job.listeners.farmer.HarvestMasteryListener(this, playerDataManager), this);
+        getServer().getPluginManager().registerEvents(new org.job.job.listeners.farmer.FarmerCookingListener(playerDataManager, skillManager), this);
+        getServer().getPluginManager().registerEvents(new org.job.job.listeners.ItemProtectionListener(), this);
 
-    }
-
-    public JobManager getJobManager() {
-        return jobManager;
-    }
-
-    public FarmerSkillManager getFarmerSkillManager() {
-        return farmerSkillManager;
-    }
-    public CropXPConfig getCropXPConfig() {
-        return cropXPConfig;
-    }
-    public FarmerLevelManager getFarmerLevelManager() {
-        return farmerLevelManager;
-    }
-
-    public FarmerHUDManager getFarmerHUDManager() {
-        return farmerHUDManager;
-    }
-    public RareDropConfig getRareDropConfig() {
-        return rareDropConfig;
+        getLogger().info("Job Plugin has been enabled!");
     }
 
     @Override
     public void onDisable() {
-        jobManager.saveJobs(); // 서버 종료 시 저장
+        getLogger().info("Job Plugin has been disabled!");
     }
 
+    public int getXpForLevelUp(int level) {
+        // 기본 공식: base + (per-level * (level - 1))
+        // 예: level 1 -> 100, level 2 -> 150, level 3 -> 200
+        int base = getConfig().getInt("level-up.base", 100);
+        int perLevel = getConfig().getInt("level-up.per-level", 50);
+        return base + (perLevel * (level - 1));
+    }
+
+    public PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
+    }
+
+    public SkillConfigManager getSkillConfigManager() {
+        return skillConfigManager;
+    }
+
+    public SkillManager getSkillManager() {
+        return skillManager;
+    }
+
+    public CropXPConfig getCropXPConfig() {
+        return cropXPConfig;
+    }
+
+    public RareDropConfig getRareDropConfig() {
+        return rareDropConfig;
+    }
+
+    public HUDManager getHudManager() {
+        return hudManager;
+    }
+
+    public FarmerActionHandler getFarmerActionHandler() {
+        return farmerActionHandler;
+    }
 }

@@ -1,0 +1,42 @@
+# Job Plugin Skill Configuration
+
+skills:
+  FARMER:
+    HARVEST_MASTERY: # 수확의 정석
+      description: "수확 시 일정 확률로 주변 작물을 추가 수확합니다. 레벨당 범위가 증가합니다."
+      max-level: 7
+      points-per-level: 1
+      base-range: 3 # 기본 범위 (예: 3은 3x3x3)
+      range-per-level: 1 # 레벨당 증가하는 범위 (예: 1레벨당 1씩 증가)
+      duration-seconds: 8 # 스킬 지속 시간 (초)
+      cooldown-seconds: 60 # 스킬 쿨타임 (초)
+    RARE_CROP_CHANCE: # 특수 작물 확률 업
+      description: "작물 수확 시 희귀 작물 드롭 확률이 레벨당 0.5% 증가합니다."
+      max-level: 10
+      points-per-level: 1
+      # 레벨당 추가 드롭 확률 (기본 확률에 더해짐)
+      chance-per-level: 0.005 # 0.5%
+    COOKING_SUCCESS_RATE:
+      description: "요리 성공 확률이 레벨당 1% 증가합니다."
+      max-level: 10
+      points-per-level: 1
+      # 레벨당 성공 확률 증가량
+      success-rate-per-level: 0.01 # 1%
+    COOKING_GREAT_SUCCESS:
+      description: "요리 대성공 확률이 레벨당 0.5% 증가하여 추가 결과물을 얻습니다."
+      max-level: 10
+      points-per-level: 2
+      # 레벨당 대성공(+1) 확률
+      great-success-chance-per-level: 0.005 # 0.5%
+    COOKING_TIME_REDUCTION:
+      description: "요리 시간이 레벨당 5% 감소합니다."
+      max-level: 5
+      points-per-level: 2
+      # 레벨당 요리 시간 감소량 (비율)
+      time-reduction-per-level: 0.05 # 5%
+    AUTO_REPLANT: # 자동 심기
+      description: "작물 수확 시 자동으로 다시 심습니다."
+      level-required: 30
+    AUTO_PICKUP: # 자동 줍기
+      description: "주변에 떨어진 아이템을 자동으로 줍습니다."
+      level-required: 60

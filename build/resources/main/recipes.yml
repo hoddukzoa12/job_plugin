@@ -1,0 +1,69 @@
+recipes:
+  egg_chocolate:
+    station: POT
+    inputs:
+      cocoa: 2
+      carrot: 1 # egg_yolk 대신 특수 작물 carrot 사용
+    result:
+      material: CAKE
+      name: §d에그 초콜릿
+      lore: §7고급 디저트 요리
+    success: 0.7
+    time: 6
+
+  mortar_flour:
+    station: MORTAR
+    inputs:
+      wheat: 1
+    result:
+      material: SUGAR
+      name: §f밀가루
+      lore: §7밀을 갈아 만든 밀가루
+    success: 1.0
+    time: 2
+
+  pot_dough:
+    station: POT
+    inputs:
+      potato: 1 # flour 대신 특수 작물 potato 사용
+      sugar_cane: 1 # water_bucket 대신 특수 작물 sugar_cane 사용
+    result:
+      material: CLAY_BALL
+      name: §f반죽
+      lore: §7밀가루와 물로 만든 반죽
+    success: 1.0
+    time: 3
+
+  oven_bread:
+    station: OVEN
+    inputs:
+      beetroot: 1 # dough 대신 특수 작물 beetroot 사용
+    result:
+      material: BREAD
+      name: §f갓 구운 빵
+      lore: §7따끈따끈한 빵
+    success: 1.0
+    time: 4
+
+  pan_porkchop:
+    station: PAN
+    inputs:
+      pumpkin: 1 # porkchop 대신 특수 작물 pumpkin 사용
+    result:
+      material: COOKED_PORKCHOP
+      name: §f구운 돼지고기
+      lore: §7팬에 구운 돼지고기
+    success: 1.0
+    time: 2
+
+  blender_apple_juice:
+    station: BLENDER
+    inputs:
+      melon: 1 # apple 대신 특수 작물 melon 사용
+      nether_wart: 1 # sugar 대신 특수 작물 nether_wart 사용
+    result:
+      material: POTION
+      name: §f사과 주스
+      lore: §7상큼한 사과 주스
+    success: 1.0
+    time: 3

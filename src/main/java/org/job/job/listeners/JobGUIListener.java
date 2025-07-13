@@ -1,54 +1,48 @@
 package org.job.job.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.entity.Player;
 import org.job.job.Job;
 import org.job.job.gui.JobSelectionGUI;
 import org.job.job.jobs.JobType;
-
-import java.util.UUID;
+import org.job.job.util.ItemUtils;
 
 public class JobGUIListener implements Listener {
 
     @EventHandler
-    public void onClick(InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        // 제목을 getView().getTitle()로 가져오기
         String title = event.getView().getTitle();
         if (!title.equals("§a직업을 선택하세요")) return;
 
-        event.setCancelled(true); // GUI 내 이동 금지
+        event.setCancelled(true);
 
-        ItemStack clicked = event.getCurrentItem();
-        if (clicked == null || !clicked.hasItemMeta()) return;
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null) return;
 
-        Material type = clicked.getType();
-        if (type == Material.WOODEN_HOE) {
-            JobSelectionGUI.assignJob(player, JobType.FARMER);
-        } else if (type == Material.WOODEN_PICKAXE) {
-            JobSelectionGUI.assignJob(player, JobType.MINER);
+        String itemType = ItemUtils.getJobItemType(clickedItem);
+        if (itemType == null) return;
+
+        switch (itemType) {
+            case "JOB_SELECT_FARMER" -> JobSelectionGUI.assignJob(player, JobType.FARMER);
+            case "JOB_SELECT_FISHERMAN" -> JobSelectionGUI.assignJob(player, JobType.FISHERMAN);
         }
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        UUID uuid = player.getUniqueId();
+        var config = Job.getInstance().getPlayerDataManager().getPlayerConfig(player.getUniqueId());
 
-        // 직업이 아직 없는 경우 → 다시 선택 UI 열기
-        if (Job.getInstance().getJobManager().getJob(uuid) == null) {
-            Bukkit.getScheduler().runTaskLater(Job.getInstance(), () -> {
-                JobSelectionGUI.open(player);
-            }, 1L); // 한 틱 후에 열어야 안정적으로 작동
+        // 직업이 아직 없는 경우, 1틱 후에 다시 GUI를 엽니다.
+        if (config.getString("job", "NONE").equals("NONE")) {
+            Bukkit.getScheduler().runTaskLater(Job.getInstance(), () -> JobSelectionGUI.open(player), 1L);
         }
     }
-
 }

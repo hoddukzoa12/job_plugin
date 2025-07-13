@@ -12,6 +12,7 @@ import org.job.job.config.RareDropConfig;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CustomItemsCrops {
@@ -19,16 +20,11 @@ public class CustomItemsCrops {
     private final Map<Material, ItemStack> specialCrops = new HashMap<>();
 
     public CustomItemsCrops(RareDropConfig config) {
-        for (Material cropType : config.getCropTypes()) {
-            RareDropConfig.CropDropData data = config.getData(cropType);
-            if (data != null) {
-                ItemStack item = createItem(data);
-                specialCrops.put(cropType, item);
-            }
-        }
+        // This constructor might not be needed if createRareCrop is static
+        // but keeping it for now if other parts of the plugin use it.
     }
 
-    private ItemStack createItem(RareDropConfig.CropDropData data) {
+    public static ItemStack createRareCrop(RareDropConfig.CropDropData data) {
         ItemStack item = new ItemStack(data.material);
         ItemMeta meta = item.getItemMeta();
 
@@ -46,7 +42,6 @@ public class CustomItemsCrops {
 
             item.setItemMeta(meta);
         }
-
         return item;
     }
 
@@ -76,3 +71,4 @@ public class CustomItemsCrops {
         return meta.getPersistentDataContainer().get(key, PersistentDataType.STRING);
     }
 }
+

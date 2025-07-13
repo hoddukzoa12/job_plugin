@@ -6,8 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.job.job.Job;
 import org.job.job.gui.JobSelectionGUI;
-
-import java.util.UUID;
+import org.job.job.skills.SkillType;
 
 public class ChangeJobCommand implements CommandExecutor {
 
@@ -18,25 +17,24 @@ public class ChangeJobCommand implements CommandExecutor {
             return true;
         }
 
-        UUID uuid = player.getUniqueId();
+        // Reset all player data related to job
+        var playerDataConfig = Job.getInstance().getPlayerDataManager().getPlayerConfig(player.getUniqueId());
+        playerDataConfig.set("job", "NONE");
+        playerDataConfig.set("level", 1);
+        playerDataConfig.set("xp", 0);
+        playerDataConfig.set("skill-points", 0);
+        for (SkillType skill : SkillType.values()) {
+            playerDataConfig.set("skill-levels." + skill.name(), 0);
+            if (!skill.isPointSkill()) { // Reset auto-toggles as well
+                playerDataConfig.set("skill-toggles." + skill.name(), false);
+            }
+        }
+        Job.getInstance().getPlayerDataManager().savePlayerConfig(player.getUniqueId(), playerDataConfig);
 
-        // 커스텀 경험치 및 레벨 초기화
-        Job.getInstance().getFarmerLevelManager().reset(uuid);
-        Job.getInstance().getFarmerHUDManager().removeHUD(player); // BossBar도 제거
-
-        // 바닐라 레벨은 그대로 두기 (지금 설정)
-        // 바닐라 레벨 초기화 필요 시 아래 주석 해제
-        // player.setLevel(0);
-        // player.setExp(0f);
-        // player.setTotalExperience(0);
-
-        // 직업 자체 초기화
-        Job.getInstance().getJobManager().resetJob(uuid);
-
-        // GUI 열기
+        // Open GUI
         JobSelectionGUI.open(player);
+        player.sendMessage("§a직업이 초기화되었습니다. 새로운 직업을 선택해주세요.");
 
         return true;
     }
-
 }
